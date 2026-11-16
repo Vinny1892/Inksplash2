@@ -59,3 +59,10 @@ work/
 *.xci
 *.nca
 prod.keys
+
+# net/: outputs derived from the retail binary, regenerate locally
+net/decompiled/
+net/main.elf
+net/symbols.json
+net/network_symbols.tsv
+net/strings_net.txt
