@@ -65,8 +65,8 @@ RULES
   writing HLE for it; HLE only what needs a service or the kernel (see the lift/HLE boundary in
   PR #7 of `bangmcpe3321/sp2decomp`).
 - Keep the vendored generator fixes; do not switch to LAS.
-- Commit on `retotk-baseline`, push to both remotes (GitHub `azlekayn/Splat2-ReTotK`, Forgejo
-  `wingrepo/Splat2-ReTotK`). Don't touch `bangmcpe3321/sp2decomp` PRs #3–#6.
+- Commit on `main`, push to both remotes (GitHub `azlekayn/Inksplash2`, Forgejo
+  `wingrepo/Inksplash2`). Don't touch `bangmcpe3321/sp2decomp` PRs #3–#6.
 - Report with concrete log excerpts and file paths; update `HANDOFF.md` and
   `UI_BLOCKER_NOTES.md` as state changes.
 
