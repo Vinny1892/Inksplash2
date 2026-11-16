@@ -1,4 +1,4 @@
-# Splat2-ReTotK
+# Inksplash2
 
 Splatoon 2 running natively on Linux on top of the
 [totk-recomp](https://github.com/Muhammad1259-sigma/totk-recomp) static-recompilation runtime
