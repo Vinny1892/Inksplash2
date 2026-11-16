@@ -5,7 +5,7 @@ Copy the block below as the opening message.
 ---
 
 You are continuing the Splatoon 2 → native Linux port in
-`/mnt/SSD Storage/Games/Ports/Switch/Splat2/work/Splat2-ReTotK`.
+`<splat2-root>/work/Splat2-ReTotK`.
 
 READ FIRST, in this order:
 1. `HANDOFF.md` — state, paths, build/run recipes, generator fixes, boundaries.
@@ -35,7 +35,7 @@ sets), then the page-manager state that decides which handlers/pages exist at bo
 WHAT TO DO FIRST
 1. Rebuild and reproduce, so you start from logs rather than assumptions:
    ```bash
-   cd <work>   # /mnt/SSD Storage/Games/Ports/Switch/Splat2/work
+   cd <work>   # <splat2-root>/work
    podman run --rm -v "$PWD:/w:z" -w /w/Splat2-ReTotK/baseline/totk-recomp localhost/engage-linux-build:latest bash -lc \
      'ninja -C /w/totk-linux/build-null -j10'
    podman run --rm -v "$PWD:/w:z" -w /w/totk-linux/build-null localhost/engage-linux-build:latest bash -lc \

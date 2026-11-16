@@ -3,7 +3,7 @@
 **Target: Steam Deck, 1280×720, 60 fps.**
 
 This repository is the Splatoon 2 project. The runtime baseline is vendored under
-[`baseline/totk-recomp/`](baseline/totk-recomp/) from
+[`baseline/totk-recomp/`](../baseline/totk-recomp/) from
 [`Muhammad1259-sigma/totk-recomp`](https://github.com/Muhammad1259-sigma/totk-recomp)
 (`a32f709`, MIT). That baseline is a static recompilation of *Tears of the Kingdom* to native
 Linux with an NVN-on-Vulkan renderer; it runs TotK at about 60 fps on a Steam Deck. LAS is

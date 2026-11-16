@@ -11,5 +11,5 @@ One local change is included: `tools/recomp/gen.py` now handles the two-operand 
 `FADDP Sd, Vn.2S` form, which the upstream generator left unhandled. That is required to
 lift Splatoon 2's `main` with zero unhandled instructions.
 
-See [`../SPLAT2_RETOTK_PLAN.md`](../SPLAT2_RETOTK_PLAN.md) for the port plan and measured
+See [`../notes/SPLAT2_RETOTK_PLAN.md`](../notes/SPLAT2_RETOTK_PLAN.md) for the port plan and measured
 coverage.

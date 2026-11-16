@@ -7,13 +7,13 @@ State at the end of the 2026-11-15 session. Read this first, then the documents 
 | What | Where |
 |---|---|
 | Port repo (this one) | `azlekayn/Splat2-ReTotK` (GitHub) / `wingrepo/Splat2-ReTotK` (Forgejo) |
-| Active branch | `retotk-baseline` (pushed to both remotes) |
+| Active branch | `main` (history split out of the old `retotk-baseline` fork branch; the fork is archived as `Splat2-ReTotK-fork-archive`) |
 | Runtime baseline | `Muhammad1259-sigma/totk-recomp` @ `a32f709`, MIT, vendored at `baseline/totk-recomp/` |
 | Other Splatoon 2 port | `bangmcpe3321/sp2decomp` (Windows/Vulkan). Our cross-port findings are **PR #7**; its open PRs #3–#6 are not ours to touch |
 
 ## Persistent data (outside the repo, never commit)
 
-`/mnt/SSD Storage/Games/Ports/Switch/Splat2/`
+`<splat2-root>/`
 
 | Path | What |
 |---|---|

@@ -45,7 +45,7 @@ in the dump**:
 The 12 that do not are four linker markers (`__rel_dyn_start`, `__rel_dyn_end`,
 `__rel_plt_start`, `__rel_plt_end`) and the eight `glslc*` shader-compiler functions
 (`glslcInitialize`, `glslcCompile`, …). The `glslc*` misses match the earlier note in
-[RECOMP_BASES_FIXED.md](RECOMP_BASES_FIXED.md); they are not game code. Reproduce with
+[RECOMP_BASES_FIXED.md](https://github.com/bangmcpe3321/sp2decomp/blob/main/RECOMP_BASES_FIXED.md); they are not game code. Reproduce with
 `module-map.mjs <dir> --all`.
 
 ---
