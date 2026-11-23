@@ -1400,6 +1400,9 @@ void backend_present(NvnTexture *t) {
         frames = 0;
         last_fps_time = now;
     }
+    backend_exec_lock();
+    vk_retire_superseded_textures(t);
+    backend_exec_unlock();
 }
 
 // ================================================================== UI thread

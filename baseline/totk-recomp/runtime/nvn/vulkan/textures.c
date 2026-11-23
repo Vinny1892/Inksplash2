@@ -789,6 +789,32 @@ bool renderer_texture_has_writer(NvnTexture *t) { return alias_writer(t) != NULL
 NvnTexture *renderer_texture_alias_writer(NvnTexture *t) { return alias_writer(t); }   // (exec.c resolve_feedback)
 
 static void wb_forget(NvnTexture *t);
+void vk_retire_superseded_textures(NvnTexture *presented) {
+    // A recorded command can recreate a render target after its NVN object
+    // was finalized. Keep its descriptor, but retire the obsolete backing
+    // once sampling that descriptor resolves to the newer writer.
+    for (int i = 0; i < g_nlive;) {
+        NvnTexture *t = g_live[i];
+        TexBackend *b = t->backend;
+        // Compressible render targets keep their contents on the GPU.
+        NvnTexture *writer = t != presented && t->zombie && b->gpu_owned && (t->flags & 0x8)
+                             ? alias_writer(t) : NULL;
+        if (!writer || writer->format != t->format ||
+            writer->layout.depth != t->layout.depth || writer->layout.layers != t->layout.layers ||
+            writer->layout.levels != t->layout.levels || writer->layout.pitch != t->layout.pitch ||
+            writer->layout.block_height_log2 != t->layout.block_height_log2 ||
+            writer->layout.block_depth_log2 != t->layout.block_depth_log2) {
+            i++;
+            continue;
+        }
+        wb_forget(t);
+        live_remove(b);
+        t->zombie_gpu = true;
+        t->backend = NULL;
+        free_backend(b);
+    }
+}
+
 void backend_texture_destroyed(NvnTexture *t) {
     alias_forget(t);
     wb_forget(t);
