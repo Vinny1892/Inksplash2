@@ -13,10 +13,12 @@ if not exist "%~2" (
     exit /b 2
 )
 set "TOTK_HEADLESS="
-if /i "%~3"=="null" set "TOTK_HEADLESS=1"
+if /i "%~3"=="null" (
+    set "TOTK_HEADLESS=1"
+    set "TOTK_AUDIO=null"
+)
 set "TOTK_NVN_INT=0=53"
 set "TOTK_LIFT_ALL=1"
-set "TOTK_AUDIO=null"
 set "TOTK_NO_OVERLAY=1"
 set "TOTK_ROMFS=%~f1\romfs"
 set "TOTK_USERDATA=%~dp2manual-userdata"

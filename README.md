@@ -59,7 +59,8 @@ recent Vulkan headers and shared shaderc, or pass `--vulkan-headers`,
 `--shaderc-headers` and `--shaderc-dll` for separate local dependencies. The latter
 was used with Vulkan-Headers 1.4.357, shaderc 2025.3 headers and the x64 shaderc DLL
 from Blender. The launcher logs to `run.log` and uses its own `manual-userdata`
-directory. The test profile runs muted. In the window, Enter maps to Switch A.
+directory. Vulkan uses the Windows audio endpoint by default. Set `TOTK_AUDIO=null`
+for a muted run. The null backend runs muted. In the window, Enter maps to Switch A.
 
 ### Linux and Steam Deck
 
