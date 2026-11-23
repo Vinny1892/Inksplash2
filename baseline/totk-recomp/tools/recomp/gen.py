@@ -408,6 +408,7 @@ class Emitter:
         if swapped: anchor_reg, idx_reg = idx_reg, anchor_reg   # `add d, d, base`: base is the anchor, d the entry
         k, amt = parse_mod(addm[3]) if len(addm) == 4 else ('', 0)
         anchor = None; load = None; li = i
+        entry_defined = False
         for wi in range(len(window) - 1, -1, -1):
             a, sz, m, o = window[wi]
             ops = split_ops(o)
@@ -415,9 +416,14 @@ class Emitter:
                 anchor = imm(ops[1])
             # the table load comes before the add and is register-indexed (f_cc9..: `ldrh w12,[x13,x9,lsl #1]`, then
             # x12 reused by `ldr x12,[sp,#0x88]` between the add and the br)
-            if (m in ('ldrb', 'ldrh', 'ldrsw', 'ldrsb', 'ldrsh', 'ldr') and rn(ops[0]) == rn(idx_reg) and load is None
-                    and wi < ai and len(ops) > 1 and (mo := MEM.match(ops[1])) and mo.group(2) and GPR.match(split_ops(mo.group(2))[0])):
-                load = (m, ops); li = max(0, i - W) + wi
+            if (wi < ai and not entry_defined and ops and rn(ops[0]) == rn(idx_reg)
+                    and m not in NOWRITE_D and not m.startswith('st')):
+                # An older indexed load of the same register may belong to another switch.
+                entry_defined = True
+                if (m in ('ldrb', 'ldrh', 'ldrsw', 'ldrsb', 'ldrsh', 'ldr')
+                        and len(ops) > 1 and (mo := MEM.match(ops[1])) and mo.group(2)
+                        and GPR.match(split_ops(mo.group(2))[0])):
+                    load = (m, ops); li = max(0, i - W) + wi
         if load is None: return None
         m, ops = load
         mm = MEM.match(ops[1])
