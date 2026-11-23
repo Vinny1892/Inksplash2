@@ -221,21 +221,41 @@ extern "C" [[noreturn]] void rt_fatal_guest(const char* msg) {
 // TOTK_TRACE_STR=1: with --trace, also print any of x1..x3 that looks like a guest C string. Layout/resource APIs take
 // names by pointer, and a hex-only trace of those calls says nothing about which name was requested.
 extern "C" u64 g_rt_heap_base;   // hle_os_mem.cpp (also declared below; this one is needed by the helper above it)
+static bool trace_readable(u64 address, size_t size) {
+#ifdef _WIN32
+    while (size) {
+        MEMORY_BASIC_INFORMATION page{};
+        if (!VirtualQuery((void*)address, &page, sizeof page) || page.State != MEM_COMMIT ||
+            (page.Protect & PAGE_GUARD)) return false;
+        const DWORD readable = PAGE_READONLY | PAGE_READWRITE | PAGE_WRITECOPY |
+                               PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY;
+        if (!(page.Protect & readable)) return false;
+        size_t available = page.RegionSize - (address - (u64)page.BaseAddress);
+        if (size <= available) return true;
+        address += available;
+        size -= available;
+    }
+    return true;
+#else
+    return rt_posix_readable(address, size) != 0;
+#endif
+}
+
 static bool trace_str_at(const u64 a, const char** out) {
     if (a < 0x1000) return false;
-    if (!rt_posix_readable(a, 8)) return false;
+    if (!trace_readable(a, 8)) return false;
     const u8* p = (const u8*)a;
     if (p[0] < 0x20 || p[0] >= 0x7f) return false;   // not characters: try a SafeStringBase (chars pointer at +8)
     int n = 0;
-    while (n < 64 && rt_posix_readable(a + n, 1) && p[n] >= 0x20 && p[n] < 0x7f) n++;
-    if (n >= 4 && rt_posix_readable(a + n, 1) && p[n] == 0) { *out = (const char*)a; return true; }
+    while (n < 64 && trace_readable(a + n, 1) && p[n] >= 0x20 && p[n] < 0x7f) n++;
+    if (n >= 4 && trace_readable(a + n, 1) && p[n] == 0) { *out = (const char*)a; return true; }
     return false;
 }
 static bool trace_str(const u64 a) {
     const char* s = nullptr;
     if (trace_str_at(a, &s)) { printf("[trace %5lu]   \"%s\"\n", GetCurrentThreadId(), s); return true; }
     // SafeStringBase / std::string-like: the characters are behind a pointer in the object
-    if (!rt_posix_readable(a, 16)) return false;
+    if (!trace_readable(a, 16)) return false;
     const u64 inner = ((const u64*)a)[1];
     if (inner && trace_str_at(inner, &s)) { printf("[trace %5lu]   \"%s\"\n", GetCurrentThreadId(), s); return true; }
     return false;
@@ -294,7 +314,7 @@ static u64 guest_fn_of(u64 rip) {      // guest offset; sdk functions are tagged
 extern "C" u64 g_rt_heap_base;
 extern "C" u64 kernel_heap_size(void);
 extern "C" unsigned long long renderer_present_count(void);   // (nvn backend: presents so far)
-extern "C" uint64_t SDL_GetTicksNS(void);
+extern "C" uint64_t plat_now_ns(void);
 
 // ---------------------------------------------------------------- hardware write watchpoint (diagnostics)
 // rt_watch_write(addr): DR0 = 4-byte write watch on every thread that exists now; each hit logs the guest function
@@ -317,7 +337,7 @@ static LONG WINAPI on_watch(EXCEPTION_POINTERS* ep) {
         printf("[watch] #%ld write %08x to %llx by guest fn %s_%llx (host %llx) lr %llx frame %llu tid %lu t %llu\n", n, *(volatile u32*)g_watch_addr,
                (unsigned long long)g_watch_addr, gf >> 40 == 1 ? "s" : "f", gf & 0xFFFFFFFFFFull, rip,
                c ? (unsigned long long)c->x[30] : 0ull, (unsigned long long)renderer_present_count(), GetCurrentThreadId(),
-               (unsigned long long)(SDL_GetTicksNS() / 1000));
+               (unsigned long long)(plat_now_ns() / 1000));
     }
     return EXCEPTION_CONTINUE_EXECUTION;
 }

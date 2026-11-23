@@ -19,7 +19,7 @@
 
 namespace fsys = std::filesystem;
 #ifdef _WIN32
-static const char* kRomDir  = "C:/totk/extract/romfs";
+static const char* kRomDir  = getenv("TOTK_ROMFS") ? getenv("TOTK_ROMFS") : "C:/totk/extract/romfs";
 // TOTK_USERDATA=<dir>: saves/cache elsewhere (test runs that start a New Game must not touch the player's saves)
 static const char* kUserDir = getenv("TOTK_USERDATA") ? getenv("TOTK_USERDATA") : "C:/totk/userdata";
 static const std::string kOverlayDir = "C:/totk/overlay/romfs";   // tools/rstb_slack.py writes here (U9)

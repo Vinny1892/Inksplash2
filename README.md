@@ -39,7 +39,31 @@ The current state and the next steps are in [`notes/HANDOFF.md`](notes/HANDOFF.m
 
 ## Building and running
 
-Everything builds in Podman. The full commands, environment variables (`TOTK_LIFT_ALL`,
+### Native Windows x64
+
+For an existing EUR recompilation, keep `images/`, `romfs/`, `gen-ink-patched/`,
+`gen-ink-sdk/`, `win-null/obj/` and `win-opus-build/libopus.a` in the local data
+directory. This build reuses the generated COFF objects from the WinLibs null
+build, including the 24 main objects compiled at `-O1` to fit the PE loader.
+Build and run with native Clang/LLD from WinLibs on PATH and Python 3.9 or newer.
+
+```powershell
+$data = 'C:\path\to\eur-recomp'
+python tools/build-windows.py $data --output build/windows-vulkan
+python tools/build-windows.py $data --backend null --output build/windows-null
+.\build\windows-vulkan\run-sp2-ink-vulkan.cmd
+```
+
+The Vulkan build needs a Vulkan 1.3 driver. Set `VULKAN_SDK` to the x64 SDK with
+recent Vulkan headers and shared shaderc, or pass `--vulkan-headers`,
+`--shaderc-headers` and `--shaderc-dll` for separate local dependencies. The latter
+was used with Vulkan-Headers 1.4.357, shaderc 2025.3 headers and the x64 shaderc DLL
+from Blender. The launcher logs to `run.log` and uses its own `manual-userdata`
+directory. The test profile runs muted. In the window, Enter maps to Switch A.
+
+### Linux and Steam Deck
+
+The Linux build uses Podman. The full commands, environment variables (`TOTK_LIFT_ALL`,
 `TOTK_ROMFS`, `TOTK_IMG`, `TOTK_HEADLESS`, `TOTK_PAD_FILE`, …) and the expected
 work-tree layout are in [`notes/HANDOFF.md`](notes/HANDOFF.md), under **Build** and **Run**.
 In outline:

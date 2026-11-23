@@ -9,11 +9,13 @@
 #include <string.h>
 
 // Guest CPU context: the C view of runtime/rt.h `struct Ctx` (static_assert'd on the C++ side as well).
-typedef __uint128_t u128a __attribute__((aligned(8)));
+typedef struct CpuVector {
+    uint64_t words[2];
+} CpuVector;
 typedef struct Cpu {
     uint64_t x[32];
     uint64_t sp;
-    u128a v[32];
+    CpuVector v[32];
     uint8_t n, z, c_, vf;
     uint32_t fpcr, fpsr;
     uint64_t tpidr;
